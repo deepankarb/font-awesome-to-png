@@ -553,13 +553,13 @@ class ListUpdateAction(argparse.Action):
         exit(0)
 
 
-def export_icon(icon, size, filename, font, color):
+def export_icon(icon, size, filename, font, color, margin):
     image = Image.new("RGBA", (size, size), color=(0,0,0,0))
 
     draw = ImageDraw.Draw(image)
 
     # Initialize font
-    font = ImageFont.truetype(font, size)
+    font = ImageFont.truetype(font, size - margin)
 
     # Determine the dimensions of the icon
     width,height = draw.textsize(icons[icon], font=font)
@@ -648,14 +648,17 @@ if __name__ == '__main__':
             help="List available icon names and exit")
     parser.add_argument("--list-update", nargs=0, action=ListUpdateAction,
             help=argparse.SUPPRESS)
-    parser.add_argument("--size", type=int, default=16,
-            help="Icon size in pixels (default: 16)")
+    parser.add_argument("--size", type=int, default=32,
+            help="Icon size in pixels (default: 32)")
+    parser.add_argument("--margin", type=int, default=4,
+            help="Icon margin in pixels")
 
     args = parser.parse_args()
     icon = args.icon
     size = args.size
     font = args.font
     color = args.color
+    margin = args.margin
 
     if args.font:
         if not path.isfile(args.font) or not access(args.font, R_OK):
@@ -695,4 +698,4 @@ if __name__ == '__main__':
         print("Exporting icon \"%s\" as %s (%ix%i pixels)" %
                 (icon, filename, size, size))
 
-        export_icon(icon, size, filename, font, color)
+        export_icon(icon, size, filename, font, color, margin)
